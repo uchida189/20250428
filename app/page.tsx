@@ -1,103 +1,130 @@
-import Image from "next/image";
+'use client'
+import React, { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 
 export default function Home() {
+  const [count, setCount] = useState(0);
+  const [startTimer, setStartTimer] = useState(3);
+  const [isStarting, setStarting] = useState(false);
+  const [isStarted, setStarted] = useState(false);
+  const [isFinished, setFinished] = useState(false);
+  
+  useEffect(() => {
+    if (isStarting) {
+      const timer = setInterval(() => {
+        // 3秒カウントダウン
+        setStartTimer((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            setStarting(false);
+            setStarted(true);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      return () => {
+        setStartTimer(3);
+        clearInterval(timer);
+      };
+    }
+    
+    // 10秒経ったら終了
+    if (isStarted) {
+      setCount(0);
+      const timer = setTimeout(() => {
+        setStarted(false);
+        setFinished(true);
+      }, 10000);
+      return () => clearTimeout(timer);
+    }
+  }, [isStarting, isStarted, isFinished]);
+  
+  const getBackgroundColor = () => {
+    return "bg-white";
+    // if (isStarted) {
+    //   const intensity = Math.round(count / 10); // 0から9の範囲に
+      
+    //   switch(intensity) {
+    //     case 0:
+    //       return "bg-white";
+    //     case 1:
+    //       return "bg-red-50";
+    //     case 2:
+    //       return "bg-red-100";
+    //     case 3:
+    //       return "bg-red-200";
+    //     case 4:
+    //       return "bg-red-300";
+    //     case 5:
+    //       return "bg-red-400";
+    //     case 6:
+    //       return "bg-red-500";
+    //     case 7:
+    //       return "bg-red-600";
+    //     case 8:
+    //       return "bg-red-700";
+    //     case 9:
+    //       return "bg-red-800";
+    //     default:
+    //       return "bg-red-900";
+    //   }
+    // }
+  }
+  
+  const currentBackgroundColor = getBackgroundColor();
+  
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+    <div className={`flex flex-col w-full h-screen ${currentBackgroundColor}`}>
+      <header className="fixed overflow-hidden bg-black w-full h-10 left-0 top-0 flex px-10 gap-20 items-center">
+        <h1 className="text-xl font-bold text-white">TAPの鬼</h1>
+      </header>
+      <main className="flex w-full h-full p-[32px] pt-20 justify-center flex-col gap-[32px] items-center">
+        
+        {!isStarted && !isStarting && !isFinished ? (
+          <Button className="w-[200px] h-[50px] px-30 py-10 bg-white text-black font-bold text-xl bg-black text-white"
+            variant="outline" onClick={() => setStarting(true)}>
+            START
+          </Button>
+        ) : ( <></> )}
+        {isStarting ? (
+          <h1 className="text-4xl font-bold text-black">
+            {startTimer}
+          </h1>
+        ) : ( <></> )}
+        {isStarted ? (
+          <Button className="w-[200px] h-[50px] px-30 py-10 bg-white text-black font-bold text-xl bg-black text-white"
+            variant="outline" onClick={() => setCount(count + 1)}>
+            押せ!!
+          </Button>
+        ) : ( <></> )}
+        {isFinished ? (
+          <Card className="w-100">
+            <CardContent className="flex flex-col gap-2">
+              <h1 className="text-lg font-bold text-black text-center">
+                あなたのスコアは
+              </h1>
+              <h1 className="text-4xl font-bold text-black text-center">
+                {count}
+              </h1>
+              <h1 className="text-lg font-bold text-black text-center">
+                でした!!
+              </h1>
+            </CardContent>
+            <CardFooter className="flex justify-center">
+              <Button className="bg-black text-white font-bold text-xl px-10 py-5"
+                variant="outline" onClick={() => setFinished(false)}>
+                終了
+              </Button>
+            </CardFooter>
+          </Card>
+        ) : ( <></> )}
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
 }
