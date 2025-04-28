@@ -45,42 +45,8 @@ export default function Home() {
     }
   }, [isStarting, isStarted, isFinished]);
   
-  const getBackgroundColor = () => {
-    return "bg-white";
-    // if (isStarted) {
-    //   const intensity = Math.round(count / 10); // 0から9の範囲に
-      
-    //   switch(intensity) {
-    //     case 0:
-    //       return "bg-white";
-    //     case 1:
-    //       return "bg-red-50";
-    //     case 2:
-    //       return "bg-red-100";
-    //     case 3:
-    //       return "bg-red-200";
-    //     case 4:
-    //       return "bg-red-300";
-    //     case 5:
-    //       return "bg-red-400";
-    //     case 6:
-    //       return "bg-red-500";
-    //     case 7:
-    //       return "bg-red-600";
-    //     case 8:
-    //       return "bg-red-700";
-    //     case 9:
-    //       return "bg-red-800";
-    //     default:
-    //       return "bg-red-900";
-    //   }
-    // }
-  }
-  
-  const currentBackgroundColor = getBackgroundColor();
-  
   return (
-    <div className={`flex flex-col w-full h-screen ${currentBackgroundColor}`}>
+    <div className={`flex flex-col w-full h-screen`}>
       <header className="fixed overflow-hidden bg-black w-full h-10 left-0 top-0 flex px-10 gap-20 items-center">
         <h1 className="text-xl font-bold text-white">TAPの鬼</h1>
       </header>
